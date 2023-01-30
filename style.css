@@ -210,4 +210,8 @@ fieldset label {
     .change {
         width: 100%;
     }
+
+    .contChange:hover .changeBorder {
+        width: 100%;
+    }
 }
