@@ -51,31 +51,35 @@ function action(){
     else if (act == 'bintodec') bintodec()
 }
 
+function insertText(value){
+    let text = value.toString()
+    text = text.replaceAll(',', '')
+    out.value = text
+}
+
 function changeAction(){
     if (act == 'dectobin') {
         act = 'bintodec'
-        erase('')
+        clearFields()
         labelInpt.innerHTML = 'Insert binary number:'
         title.innerHTML = '<span>Convert</span> Binary <span>to</span> Decimal'
         changeButton.innerHTML = '<span>Change conversion</span>: Decimal <span>to</span> Binary'
     } else if (act == 'bintodec') {
         act = 'dectobin'
-        erase('')
+        clearFields()
         labelInpt.innerHTML = 'Insert decimal number:'
         title.innerHTML = '<span>Convert</span> Decimal <span>to</span> Binary'
         changeButton.innerHTML = '<span>Change conversion</span>: Binary <span>to</span> Decimal'
     }
-}
-
-function insertText(text){
-    let str = text.toString()
-    str = str.replaceAll(',', '')
-    out.value = str
+    
+    clearTimeout(copyTimeout)
+    out.setAttribute('placeholder', '')
 }
 
 function verify(str){
     if (isNaN(str)) {
-        erase('Por favor, insira apenas números!')
+        clearFields()
+        feedback('Please enter only numbers!', inpt, 5000)
         return true
     }
     
@@ -83,7 +87,8 @@ function verify(str){
         let bits = inpt.value.split('')
         for (let bit of bits) {
             if (bit > 1) {
-                erase('Por favor, insira apenas zeros(0) e uns(1)!')
+                clearFields()
+                feedback('Please enter only zeros(0) and ones(1)!', inpt, 5000)
                 return true
             }
         }
@@ -92,17 +97,32 @@ function verify(str){
     return false
 }
 
-function erase(text){
+function clearFields(){
     inpt.value = ''
     out.value = ''
-    inpt.setAttribute('placeholder', text)
-    setTimeout(()=>{
-        inpt.setAttribute('placeholder', '')
-    }, 5000)
 }
 
+function feedback(text, elem, time){
+    elem.setAttribute('placeholder', text)
+    setTimeout(()=>{
+        elem.setAttribute('placeholder', '')
+    }, time)
+}
+
+let copyTimeout
 function copy(){
-    navigator.clipboard.writeText(out.value)
+    let text = out.value
+    if (text == '') return
+
+    navigator.clipboard.writeText(text)
+
+    out.value = ''
+
+    feedback('Successfully copied!', out, 3000)
+
+    copyTimeout = setTimeout(() => {
+       out.value = text
+    }, 3000);
 }
 
 
